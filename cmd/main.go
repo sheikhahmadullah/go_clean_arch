@@ -27,8 +27,7 @@ func main() {
 
 	route.NewSignupRouter(router, signupController)
 
-	router.Run(":8080")
-
 	fmt.Println("Server running on port: 8080")
+	router.Run(":8080")
 
 }
