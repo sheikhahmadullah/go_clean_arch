@@ -18,24 +18,27 @@ func NewSignupController(u *usecase.SignupUsecase) *SignupController {
 
 // the above part is dependency injection
 
-//
-
 func (c *SignupController) Signup(ctx *gin.Context) {
-	var user domain.User
+	var req domain.SignupRequest // Use the Request DTO
 
-	// check if user sends bad request
-	if err := ctx.BindJSON(&user); err != nil {
+	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
+	// Map the request data to the User model
+	user := domain.User{
+		Email:    req.Email,
+		Password: req.Password, // Now the password is NOT empty!
+	}
+
 	err := c.usecase.Signup(&user)
-	// check if we failed to create a user in signup usecase step
 	if err != nil {
+		// Tip: If the error is "Email already exists",
+		// you might want to return http.StatusConflict (409)
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"message": "User created"})
-
 }

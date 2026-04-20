@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"errors"
 	"golang-rest-api/domain"
 
 	"golang.org/x/crypto/bcrypt"
@@ -21,7 +22,13 @@ func NewSignupUsecase(r domain.UserRepository) *SignupUsecase {
 }
 
 func (u *SignupUsecase) Signup(user *domain.User) error {
-	hashed, _ := bcrypt.GenerateFromPassword([]byte(user.Password), 14)
+
+	existingUser, err := u.repo.FindByEmail(user.Email)
+
+	if existingUser != nil && err == nil {
+		return errors.New("Email already exists")
+	}
+	hashed, _ := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 
 	user.Password = string(hashed)
 

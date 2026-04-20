@@ -22,7 +22,13 @@ func (r *userRepository) FindByEmail(email string) (*domain.User, error) {
 	var user domain.User
 
 	err := r.db.Where("email = ?", email).First(&user).Error
-
+	if err != nil {
+		// If no user is found, return nil for the user and the error
+		if err == gorm.ErrRecordNotFound {
+			return nil, err
+		}
+		return nil, err
+	}
 	return &user, err
 
 }

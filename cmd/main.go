@@ -22,10 +22,20 @@ func main() {
 	userRepo := repository.NewUserRepository(db)
 
 	signupUsecase := usecase.NewSignupUsecase(userRepo)
-
+	loginUsecase := usecase.NewLoginUsecase(userRepo)
 	signupController := controller.NewSignupController(signupUsecase)
+	loginControlelr := controller.NewLoginController(loginUsecase)
 
 	route.NewSignupRouter(router, signupController)
+	route.NewLoginRouter(router, loginControlelr)
+
+	// protected := router.Group("/")
+	// protected.Use(middleware.JWTAuthMiddleware())
+
+	// protected.GET("/profile", func(c *gin.Context) {
+	// 	c.JSON(200, gin.H{"message": "protected route"})
+
+	// })
 
 	fmt.Println("Server running on port: 8080")
 	router.Run(":8080")
