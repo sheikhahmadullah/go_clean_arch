@@ -1,0 +1,20 @@
+version: "5.1.1"
+
+services:
+  db:
+    image: postgres:15
+    container_name: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: clean_api
+    ports:
+      - "5432:5432"
+
+  app:
+    build: .
+    container_name: go-api
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db

@@ -38,6 +38,8 @@ func main() {
 
 	})
 
+	// task wiring
+
 	taskRepo := repository.NewTaskRepository(db)
 
 	taskUsecase := usecase.NewTaskUsecase(taskRepo)

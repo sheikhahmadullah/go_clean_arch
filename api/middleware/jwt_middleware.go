@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"golang-rest-api/bootstrap"
 	"net/http"
 	"strings"
 
@@ -8,10 +9,9 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-var secret_key = []byte("secret-key")
-
 func JWTAuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		secret := []byte(bootstrap.GetEnv("JWT_SECRET"))
 		authHeader := c.GetHeader("Authorization")
 
 		if authHeader == "" {
@@ -23,7 +23,7 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 		tokenString := strings.Split(authHeader, " ")[1]
 
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-			return secret_key, nil
+			return secret, nil
 		})
 
 		if err != nil || !token.Valid {

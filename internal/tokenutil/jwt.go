@@ -1,16 +1,16 @@
 package tokenutil
 
 import (
+	"golang-rest-api/bootstrap"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 )
 
 // this will generate tokens for us
-var secret_key = []byte("secret-key")
 
 func GenerateToken(userId uint) (string, error) {
-
+	secret := []byte(bootstrap.GetEnv("JWT_SECRET"))
 	claims := jwt.MapClaims{
 		"user_id": userId,
 		"exp":     time.Now().Add(time.Hour * 24).Unix(),
@@ -18,5 +18,5 @@ func GenerateToken(userId uint) (string, error) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	return token.SignedString(secret_key)
+	return token.SignedString(secret)
 }
