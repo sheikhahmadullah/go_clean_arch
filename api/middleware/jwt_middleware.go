@@ -32,6 +32,14 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
+		// ✅ extract claims
+		claims := token.Claims.(jwt.MapClaims)
+
+		userID := uint(claims["user_id"].(float64))
+
+		// ✅ store in context
+		c.Set("user_id", userID)
+
 		c.Next()
 
 	}

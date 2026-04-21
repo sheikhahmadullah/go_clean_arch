@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"golang-rest-api/api/controller"
+	"golang-rest-api/api/middleware"
 	"golang-rest-api/api/route"
 	"golang-rest-api/bootstrap"
 	"golang-rest-api/repository"
@@ -29,13 +30,21 @@ func main() {
 	route.NewSignupRouter(router, signupController)
 	route.NewLoginRouter(router, loginControlelr)
 
-	// protected := router.Group("/")
-	// protected.Use(middleware.JWTAuthMiddleware())
+	protected := router.Group("/")
+	protected.Use(middleware.JWTAuthMiddleware())
 
-	// protected.GET("/profile", func(c *gin.Context) {
-	// 	c.JSON(200, gin.H{"message": "protected route"})
+	protected.GET("/profile", func(c *gin.Context) {
+		c.JSON(200, gin.H{"message": "protected route"})
 
-	// })
+	})
+
+	taskRepo := repository.NewTaskRepository(db)
+
+	taskUsecase := usecase.NewTaskUsecase(taskRepo)
+
+	taskController := controller.NewTaskController(taskUsecase)
+
+	route.NewTaskRouter(router, taskController)
 
 	fmt.Println("Server running on port: 8080")
 	router.Run(":8080")
